@@ -26,15 +26,28 @@ public class PlayerManager : MonoBehaviour
         CameraManager = GetComponent<CameraManager>();
 
         CameraManager.Initialize();
+        MovementManager.Initialize();
+        PlayerVisualsManager.Initialize();
+        PlayerUIManager.Initialize();
+        SkillManager.Initialize();
+        HealthComponent.Initialize();
     }
 
     private void Update()
     {
         InputManager.UpdateInput();
+        PlayerVisualsManager.UpdateVisuals(Time.deltaTime);
+        SkillManager.UpdateSkills();
+        PlayerUIManager.UpdateUI();
     }
 
     private void LateUpdate()
     {
         CameraManager.UpdateCamera(Time.deltaTime);
+    }
+
+    private void FixedUpdate()
+    {
+        MovementManager.UpdateMovement(Time.fixedDeltaTime);
     }
 }
