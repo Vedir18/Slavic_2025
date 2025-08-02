@@ -6,6 +6,7 @@ public class PetManager : MonoBehaviour
 {
     public int PetID;
     public PetState State;
+    public HealthComponent HP {  get; private set; }
     [Header("Skills")]
     [SerializeField] private PetSkill _petSkill1;
     [SerializeField] private PetSkill _petSkill2;
@@ -13,9 +14,11 @@ public class PetManager : MonoBehaviour
     [SerializeField] private float _petSpeed;
     public PlayerManager PlayerManager => _petsManager.PlayerManager;
     private PetsManager _petsManager;
+    public PetsManager PetsManager => _petsManager;
     private bool _firstSkillActive;
     public Rigidbody Rigidbody;
     private bool _movementSupressed = false;
+    public float Cooldown;
     public void Initialize(PetsManager petsManager)
     {
         _petsManager = petsManager;
@@ -23,6 +26,8 @@ public class PetManager : MonoBehaviour
         Rigidbody = GetComponent<Rigidbody>();
         _petSkill1?.InitializeSkill(this);
         _petSkill2?.InitializeSkill(this);
+        HP = GetComponent<HealthComponent>();
+        HP.Initialize();
     }
 
     public void UpdatePet(float deltaTime)
@@ -36,6 +41,11 @@ public class PetManager : MonoBehaviour
             else _petSkill2?.UpdateSkill(deltaTime);
             return;
         }
+        if(State == PetState.Cooldown)
+        {
+            Cooldown -= deltaTime;
+            if (Cooldown <= 0) State = PetState.Vibing;
+        }
         
     }
 
@@ -43,6 +53,7 @@ public class PetManager : MonoBehaviour
     {
         if(State == PetState.Dead) return;
         if (State == PetState.DuringSkill) return;
+        if (State == PetState.Cooldown) return;
 
         if (useFirstSkill) _petSkill1?.UsePetSkill();
         else _petSkill2?.UsePetSkill();
@@ -72,4 +83,4 @@ public class PetManager : MonoBehaviour
     }
 }
 
-public enum PetState { Vibing, DuringSkill, Dead }
+public enum PetState { Vibing, DuringSkill, Cooldown, Dead }

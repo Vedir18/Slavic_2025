@@ -5,6 +5,7 @@ using UnityEngine;
 public class Throw : PetSkill
 {
     [Header("Stats")]
+    [SerializeField] private float cooldown;
     [SerializeField] private float _minDistance;
     [SerializeField] private float _maxDistance;
     [SerializeField] private float _travelSpeed;
@@ -56,7 +57,8 @@ public class Throw : PetSkill
 
     private void EndThrow()
     {
-        _userPet.State = PetState.Vibing;
+        _userPet.State = PetState.Cooldown;
+        _userPet.Cooldown = cooldown;
         _userPet.SuppressMovement(false);
         _userPet.Rigidbody.velocity = Vector3.zero;
         _userPet.Rigidbody.useGravity = true;

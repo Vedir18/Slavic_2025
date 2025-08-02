@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dash : PetSkill
+public class Shield : PetSkill
 {
     [SerializeField] private float cooldown;
-    [SerializeField] private float dashVelocity;
+    [SerializeField] private float shieldDuration;
     [SerializeField] private LineRenderer path;
-    private Vector3 dashVector;
-    private float dashTimer;
+    [SerializeField] private GameObject indicator;
+
+    private float shieldTimer;
     private bool _displayOn;
+
     public override void DisplayUI(bool On)
     {
         path.gameObject.SetActive(On);
+        indicator.SetActive(On);
         _displayOn = On;
     }
 
@@ -21,7 +24,7 @@ public class Dash : PetSkill
         transform.position = _playerManager.transform.position;
         if (_displayOn)
         {
-            dashVector = _userPet.Rigidbody.position - _playerManager.transform.position;
+            Vector3 dashVector = _userPet.Rigidbody.position - _playerManager.transform.position;
             dashVector = new Vector3(dashVector.x, 0, dashVector.z);
 
             path.SetPosition(0, Vector3.zero);
@@ -35,23 +38,24 @@ public class Dash : PetSkill
         _userPet.SuppressMovement(true);
         _userPet.Rigidbody.velocity = Vector3.zero;
         _userPet.Rigidbody.useGravity = false;
-        _playerManager.MovementManager.SuppressMovement(true);
-        _playerManager.MovementManager.SetVelocity(dashVector.normalized * dashVelocity);
+        _userPet.Rigidbody.position = _playerManager.transform.position;
+        _userPet.transform.localScale = Vector3.one * 2;
         _playerManager.Dodging = true;
-        dashTimer = 0;
+        shieldTimer = 0;
     }
 
     public override void UpdateSkill(float deltaTime)
     {
-        dashTimer += deltaTime;
-        if (dashTimer >= dashVector.magnitude / dashVelocity)
+        shieldTimer += deltaTime;
+        _userPet.Rigidbody.position = _playerManager.transform.position;
+        if (shieldTimer >= shieldDuration)
         {
+            _userPet.transform.localScale = Vector3.one;
             _userPet.State = PetState.Cooldown;
             _userPet.Cooldown = cooldown;
             _userPet.SuppressMovement(false);
             _userPet.Rigidbody.useGravity = true;
-            _playerManager.MovementManager.SuppressMovement(false);
-            _playerManager.MovementManager.SetVelocity(Vector3.zero);
+            _userPet.Rigidbody.position = _playerManager.transform.position - Vector3.forward;
             _playerManager.Dodging = false;
         }
     }

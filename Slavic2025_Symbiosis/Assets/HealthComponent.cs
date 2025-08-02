@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class HealthComponent : MonoBehaviour
 {
-    [SerializeField] public uint MaxHP {  get; private set; }
+    public uint MaxHP;
     [SerializeField] public uint CurrentHP { get; private set; }
     public UnityEvent<HealthComponent> OnDamaged;
     public UnityEvent<HealthComponent> OnHealed;
