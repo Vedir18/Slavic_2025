@@ -72,7 +72,7 @@ public class Throw : PetSkill
     {
         _throwPath.SetPosition(0, Vector3.zero);
         _throwPath.SetPosition(1, throwVector / 4 + Vector3.up * .5f);
-        _throwPath.SetPosition(2, throwVector / 2 + Vector3.up * 1f);
+        _throwPath.SetPosition(2, throwVector / 2 + Vector3.up * .75f);
         _throwPath.SetPosition(3, throwVector / 4 * 3 + Vector3.up * .5f);
         _throwPath.SetPosition(4, throwVector);
     }

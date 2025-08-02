@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerUIManager PlayerUIManager { get; private set; }
     public PlayerVisualsManager PlayerVisualsManager { get; private set; }
     public CameraManager CameraManager { get; private set; }
-
+    public bool Dodging;
 
     private void Start()
     {
