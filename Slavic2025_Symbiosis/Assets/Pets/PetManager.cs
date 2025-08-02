@@ -9,26 +9,26 @@ public class PetManager : MonoBehaviour
     [Header("Skills")]
     [SerializeField] private PetSkill _petSkill1;
     [SerializeField] private PetSkill _petSkill2;
-    [Header("Following")]
+    [Header("Vibing")]
     [SerializeField] private float _petSpeed;
-    [SerializeField] private float _minSwitchTime, _maxSwitchTime;
-
+    public PlayerManager PlayerManager => _petsManager.PlayerManager;
     private PetsManager _petsManager;
     private bool _firstSkillActive;
-    private float _followTimer;
-    private Rigidbody _rigidbody;
-    private PetPosition _currentPosition;
-
+    public Rigidbody Rigidbody;
+    private bool _movementSupressed = false;
     public void Initialize(PetsManager petsManager)
     {
         _petsManager = petsManager;
-        State = PetState.Following;
-        _rigidbody = GetComponent<Rigidbody>();
-        ResetFollow();
+        State = PetState.Vibing;
+        Rigidbody = GetComponent<Rigidbody>();
+        _petSkill1?.InitializeSkill(this);
+        _petSkill2?.InitializeSkill(this);
     }
 
     public void UpdatePet(float deltaTime)
     {
+        _petSkill1?.UpdateUI(deltaTime);
+        _petSkill2?.UpdateUI(deltaTime);
         if (State == PetState.Dead) return;
         if (State == PetState.DuringSkill)
         {
@@ -36,45 +36,40 @@ public class PetManager : MonoBehaviour
             else _petSkill2?.UpdateSkill(deltaTime);
             return;
         }
+        
     }
 
     public void UseSkill(bool useFirstSkill)
     {
+        if(State == PetState.Dead) return;
+        if (State == PetState.DuringSkill) return;
+
         if (useFirstSkill) _petSkill1?.UsePetSkill();
         else _petSkill2?.UsePetSkill();
+        _firstSkillActive = useFirstSkill;
+        DisplaySkillUI(false);
+    }
+
+    public void DisplaySkillUI(bool On)
+    {
+        _petSkill1?.DisplayUI(On);
+        _petSkill2?.DisplayUI(On);
     }
 
     public void FixedUpdatePet(float deltaTime)
     {
-        if (State == PetState.Following)
-        {
-            _followTimer -= deltaTime;
-            if (_followTimer > 0)
-            {
-                Vector3 followDirection = _currentPosition.transform.position - _rigidbody.position;
-                float t = Mathf.InverseLerp(0, _petSpeed, followDirection.magnitude);
-                float a = Mathf.Lerp(0, 2, t);
-                followDirection.Normalize();
-                _rigidbody.velocity = followDirection * _petSpeed * a;
-            }
-            else ResetFollow();
-            return;
-        }
         if(State == PetState.DuringSkill)
         {
-            if (_firstSkillActive) _petSkill1.FixedUpdateSkill(deltaTime);
-            else _petSkill2.FixedUpdateSkill(deltaTime);
+            if (_firstSkillActive) _petSkill1?.FixedUpdateSkill(deltaTime);
+            else _petSkill2?.FixedUpdateSkill(deltaTime);
             return;
         }
     }
 
-    private void ResetFollow()
+    public void SuppressMovement(bool value)
     {
-        _followTimer = Random.Range(_minSwitchTime, _maxSwitchTime);
-        PetPosition newPosition = _petsManager.GetPetPosition(PetID);
-        if (newPosition != null) _currentPosition = newPosition;
-        else _currentPosition.PetID = PetID;
+        _movementSupressed = value;
     }
 }
 
-public enum PetState { Following, DuringSkill, Dead }
+public enum PetState { Vibing, DuringSkill, Dead }

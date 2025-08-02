@@ -33,7 +33,7 @@ public class PlayerUIManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        uint selectedSkill = _playerManager.SkillManager.SelectedSkill;
+        uint selectedSkill = _playerManager.SkillManager.SelectedPet;
         UpdateSelectedSkills(selectedSkill);
 
     }
@@ -90,9 +90,9 @@ public class PlayerUIManager : MonoBehaviour
         _extend1.SetActive(highlight1);
         _extend2.SetActive(highlight2);
         _extend3.SetActive(highlight3);
-        _petIcon1.CrossFadeAlpha(highlight1 ? _highlightedAlpha : _notHighlightedAlpha, .1f, true);
-        _petIcon2.CrossFadeAlpha(highlight2 ? _highlightedAlpha : _notHighlightedAlpha, .1f, true);
-        _petIcon3.CrossFadeAlpha(highlight3 ? _highlightedAlpha : _notHighlightedAlpha, .1f, true);
+        _petIcon1.color = SetAlpha(_petIcon1.color, highlight1 ? _highlightedAlpha : _notHighlightedAlpha);
+        _petIcon2.color = SetAlpha(_petIcon2.color, highlight2 ? _highlightedAlpha : _notHighlightedAlpha);
+        _petIcon3.color = SetAlpha(_petIcon3.color, highlight3 ? _highlightedAlpha : _notHighlightedAlpha);
         _p1.SetActive(selectedSkill == 0);
         _p2.SetActive(selectedSkill == 0);
         _p3.SetActive(selectedSkill == 0);
@@ -100,9 +100,7 @@ public class PlayerUIManager : MonoBehaviour
 
     private IEnumerator HighlightUsedSkill((uint, uint) id)
     {
-        Debug.Log($"Starting {id.Item1} {id.Item2}");
         yield return new WaitForSeconds(.2f);
-        Debug.Log($"Ending {id.Item1} {id.Item2}");
         switch (id.Item1)
         {
             case 1:
@@ -130,7 +128,7 @@ public class PlayerUIManager : MonoBehaviour
                 }
                 break;
             case 3:
-                _highlighted1 = false;
+                _highlighted3 = false;
                 switch (id.Item2)
                 {
                     case 1:
@@ -144,10 +142,6 @@ public class PlayerUIManager : MonoBehaviour
         }
     }
 
-    private Color SetAlpha(Color color, float alpha)
-    {
-        return new Color(color.r, color.g, color.b, alpha);
-    }
     #endregion
 
     #region HP
@@ -163,4 +157,8 @@ public class PlayerUIManager : MonoBehaviour
         _hp3.color = SetAlpha(_hp3.color, health.CurrentHP >= 3 ? 1 : 0);
     }
     #endregion
+    private Color SetAlpha(Color color, float alpha)
+    {
+        return new Color(color.r, color.g, color.b, alpha);
+    }
 }

@@ -14,6 +14,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerVisualsManager PlayerVisualsManager { get; private set; }
     public CameraManager CameraManager { get; private set; }
 
+
     private void Start()
     {
         InputManager = GetComponent<InputManager>();

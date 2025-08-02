@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PetsManager : MonoBehaviour
 {
-    [SerializeField] private List<PetPosition> _positions;
+    public PlayerManager PlayerManager;
     [SerializeField] private PetManager _pet1;
     [SerializeField] private PetManager _pet2;
     [SerializeField] private PetManager _pet3;
 
     private void Start()
     {
+        PlayerManager = FindObjectOfType<PlayerManager>();
         _pet1.Initialize(this);
         _pet2.Initialize(this);
         _pet3.Initialize(this);
@@ -33,19 +34,26 @@ public class PetsManager : MonoBehaviour
         _pet3.FixedUpdatePet(deltaTime);
     }
 
-    public PetPosition GetPetPosition(int petID)
+    public void DisplaySkillsUI(uint petID)
     {
-        List<PetPosition> availablePositions = new List<PetPosition>();
-        foreach (var position in _positions)
-        {
-            if (position.PetID == petID) position.PetID = 0;
-            if (position.Available) availablePositions.Add(position);
-        }
-        if (availablePositions.Count == 0) return null;
+        _pet1.DisplaySkillUI(petID == 1);
+        _pet2.DisplaySkillUI(petID == 2);
+        _pet3.DisplaySkillUI(petID == 3);
+    }
 
-        int randomID = Random.Range((int)0, availablePositions.Count);
-        PetPosition chosenPosition = availablePositions[randomID];
-        chosenPosition.PetID = petID;
-        return chosenPosition;
+    public void UseSkill(uint petID, uint skillID)
+    {
+        switch(petID)
+        {
+            case 1:
+                _pet1.UseSkill(skillID == 1);
+                break;
+            case 2:
+                _pet2.UseSkill(skillID == 1);
+                break;
+            case 3:
+                _pet3.UseSkill(skillID == 1);
+                break;
+        }
     }
 }

@@ -4,36 +4,39 @@ using UnityEngine;
 
 public class SkillManager : MonoBehaviour
 {
-    public uint SelectedSkill { get; private set; }
+    public uint SelectedPet { get; private set; }
     private PlayerManager _playerManager;
-
+    private PetsManager _petsManager;
 
     public void Initialize()
     {
         _playerManager = GetComponent<PlayerManager>();
-        SelectedSkill = 0;
+        _petsManager = FindObjectOfType<PetsManager>();
+        SelectedPet = 0;
     }
 
     public void UpdateSkills()
     {
         uint SkillInput = _playerManager.InputManager.GetSkillInput();
 
-        if(SelectedSkill == 0)
+        if(SelectedPet == 0)
         {
-            SelectedSkill = SkillInput;
+            SelectedPet = SkillInput;
+            _petsManager.DisplaySkillsUI(SelectedPet);
             return;
         }
         
         if(SkillInput ==1 || SkillInput == 2)
         {
-            UseSkill(SelectedSkill, SkillInput);
-            SelectedSkill = 0;
+            UseSkill(SelectedPet, SkillInput);
+            SelectedPet = 0;
             return;
         }
 
         if(SkillInput == 3)
         {
-            SelectedSkill = 0;
+            SelectedPet = 0;
+            _petsManager.DisplaySkillsUI(SelectedPet);
             return;
         }
     }
@@ -41,5 +44,6 @@ public class SkillManager : MonoBehaviour
     private void UseSkill(uint petID, uint skillID)
     {
         _playerManager.PlayerUIManager.HightlightSkill(petID, skillID);
+        _petsManager.UseSkill(petID, skillID);
     }
 }
