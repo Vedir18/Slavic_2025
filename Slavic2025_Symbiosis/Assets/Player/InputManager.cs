@@ -9,12 +9,14 @@ public class InputManager : MonoBehaviour
     public Vector2Int MovementInput { get; private set; }
     public Vector3 MouseWorldPosition { get; private set; }
     private uint SkillInput;
+    private bool attack;
 
     public void UpdateInput()
     {
         MovementInput = new Vector2Int((int)Input.GetAxisRaw("Horizontal"), (int)Input.GetAxisRaw("Vertical"));
         MouseWorldPosition = GetMouseWorldPosition();
         if (SkillInput == 0) SkillInput = SetSkillInput();
+        attack |= Input.GetKeyDown(KeyCode.Mouse0);
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -41,5 +43,15 @@ public class InputManager : MonoBehaviour
         uint cache = SkillInput;
         SkillInput = 0;
         return cache;
+    }
+
+    public bool GetAttackDown()
+    {
+        if (attack)
+        {
+            attack = false;
+            return true;
+        }
+        else return false;
     }
 }

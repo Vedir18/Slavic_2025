@@ -32,14 +32,17 @@ public class PlayerManager : MonoBehaviour
         PlayerUIManager.Initialize();
         SkillManager.Initialize();
         HealthComponent.Initialize();
+        AttackManager.Initialize();
     }
 
     private void Update()
     {
+        float deltaTime = Time.deltaTime;
         InputManager.UpdateInput();
-        PlayerVisualsManager.UpdateVisuals(Time.deltaTime);
+        PlayerVisualsManager.UpdateVisuals(deltaTime);
         SkillManager.UpdateSkills();
         PlayerUIManager.UpdateUI();
+        AttackManager.UpdateAttack(deltaTime);
     }
 
     private void LateUpdate()

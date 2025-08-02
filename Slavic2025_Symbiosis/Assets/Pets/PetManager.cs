@@ -35,7 +35,7 @@ public class PetManager : MonoBehaviour
         _petSkill1?.UpdateUI(deltaTime);
         _petSkill2?.UpdateUI(deltaTime);
         if (State == PetState.Dead) return;
-        if (State == PetState.DuringSkill)
+        if (State == PetState.DuringSkill || State == PetState.Special)
         {
             if (_firstSkillActive) _petSkill1?.UpdateSkill(deltaTime);
             else _petSkill2?.UpdateSkill(deltaTime);
@@ -51,10 +51,13 @@ public class PetManager : MonoBehaviour
 
     public void UseSkill(bool useFirstSkill)
     {
-        if(State == PetState.Dead) return;
-        if (State == PetState.DuringSkill) return;
-        if (State == PetState.Cooldown) return;
-
+        if (State != PetState.Special)
+        {
+            if (State == PetState.Dead) return;
+            if (State == PetState.DuringSkill) return;
+            if (State == PetState.Cooldown) return;
+        }
+        
         if (useFirstSkill) _petSkill1?.UsePetSkill();
         else _petSkill2?.UsePetSkill();
         _firstSkillActive = useFirstSkill;
@@ -69,7 +72,7 @@ public class PetManager : MonoBehaviour
 
     public void FixedUpdatePet(float deltaTime)
     {
-        if(State == PetState.DuringSkill)
+        if(State == PetState.DuringSkill || State == PetState.Special)
         {
             if (_firstSkillActive) _petSkill1?.FixedUpdateSkill(deltaTime);
             else _petSkill2?.FixedUpdateSkill(deltaTime);
@@ -83,4 +86,4 @@ public class PetManager : MonoBehaviour
     }
 }
 
-public enum PetState { Vibing, DuringSkill, Cooldown, Dead }
+public enum PetState { Vibing, DuringSkill, Cooldown, Dead, Special }
